@@ -1,6 +1,6 @@
-# Moodle Plugins for integrating with ExLibris campusM
+# Moodle Plugins for integrating with Ex Libris campusM
 
-### ExLibris campusM - [http://campusm.com](hrrp://campusm.com)
+### Ex Libris campusM - [http://campusm.com](hrrp://campusm.com)
 
 ### Moodle - [http://moodle.org](http://moodle.org)
 
