@@ -38,9 +38,12 @@ class message_output_ombiel_alerts extends message_output {
         
         // Build message
         $note = $SITE->shortname.': '.$eventdata->subject;
-
-        $message = $eventdata->smallmessage;
         
+        if (!empty($eventdata->smallmessage)) {
+            $message = $eventdata->smallmessage;
+        } else {
+            $message = $eventdata->fullmessage;
+        }
         
         if (!empty($CFG->ombielalertsaekmenuid)) {
             if (!empty($eventdata->contexturl)) {
