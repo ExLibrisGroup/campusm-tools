@@ -4,7 +4,7 @@
  *
  * @copyright &copy; 2014 ExLibris
  * @author ExLibris
- * @package oMbiel_webservices
+ * @package ExLibris_webservices
  * @version 1.0
  */
 
@@ -14,10 +14,10 @@ require_once($CFG->dirroot.'/message/output/lib.php');
  * The alerts message processor
  *
  */
-class message_output_ombiel_alerts extends message_output {
+class message_output_exlibris_alerts extends message_output {
 
     /**
-     * Processes the message and sends a notification via the oMbiel alerts web service
+     * Processes the message and sends a notification via the ExLibris alerts web service
      *
      * @param stdClass $eventdata the event data submitted by the message sender plus $eventdata->savedmessageid
      * @return true if ok, false if error
@@ -45,41 +45,18 @@ class message_output_ombiel_alerts extends message_output {
             $message = $eventdata->fullmessage;
         }
         
-        if (!empty($CFG->ombielalertsaekmenuid)) {
-            if (!empty($eventdata->contexturl)) {
-                $parsedurl = parse_url($eventdata->contexturl);
-
-                if (strpos($parsedurl['path'], '/mod/forum/discuss.php') !== false) {
-                    parse_str($parsedurl['query'], $parsedquery);       
-                    $forumid = $DB->get_field('forum_discussions', 'forum', array('id'=>$parsedquery['d']));
-                    $cm = get_coursemodule_from_instance('forum', $forumid);  
-                    $aekparams = "&_action=show_discussion&module={$cm->id}&discussion={$parsedquery['d']}&course_id={$cm->course}";
-                    $fragment = '#'.$parsedurl['fragment'];
-                } elseif (strpos($parsedurl['path'], '/mod/assign/view.php') !== false) {
-                    parse_str($parsedurl['query'], $parsedquery);
-                    $cm = $DB->get_record('course_modules', array('id'=>$parsedquery['id']));
-                    $aekparams = "&_action=show_assign&module={$parsedquery['id']}&course_id={$cm->course}";
-                    $fragment = ''; 
-                    // Assignment subjects are a bit long 
-                    $note = substr($note, 0, 45).'...';
-                } else {
-                    $aekparams = false;
-                    $fragment = '';
-                }
-
-                if ($aekparams) {   
-                    $message .= "<br><br><a href='campusm://loadaek?sid={$CFG->ombielalertsaekserviceid}&"
-                    . "toolbar={$CFG->ombielalertsaekmenuid}{$aekparams}{$fragment}'>"
-                    . "{$eventdata->contexturlname}</a>\n";
-                }
+        if (!empty($CFG->exlibrisalertsaction)) {
+            if (!empty($eventdata->contexturlname)) {
+                $message .= "<br><br><a href='{$CFG->exlibrisalertsaction}'>"
+                . "{$eventdata->contexturlname}</a>\n";
             }
         }
 
         // set up stream context and SOAP options for proxies, SSL etc.
         $credentials = sprintf('Authorization: Basic %s', 
-            base64_encode("{$CFG->ombielalertsserversserverusername}:{$CFG->ombielalertsserverpassword}") ); 
+            base64_encode("{$CFG->exlibrisalertsserversserverusername}:{$CFG->exlibrisalertsserverpassword}") ); 
         
-        $parsedEndpoint = parse_url($CFG->ombielalertsserverendpoint);
+        $parsedEndpoint = parse_url($CFG->exlibrisalertsserverendpoint);
         
         $streamContextOptions = array(
           'http'=>array(
@@ -100,9 +77,9 @@ class message_output_ombiel_alerts extends message_output {
         $context = stream_context_create($streamContextOptions);
         
         $soapOptions = array(
-            'login' => $CFG->ombielalertsserversserverusername,
-            'password' => $CFG->ombielalertsserverpassword,
-            'location' => $CFG->ombielalertsserverendpoint,
+            'login' => $CFG->exlibrisalertsserversserverusername,
+            'password' => $CFG->exlibrisalertsserverpassword,
+            'location' => $CFG->exlibrisalertsserverendpoint,
             'stream_context' => $context,
         );
         
@@ -114,12 +91,12 @@ class message_output_ombiel_alerts extends message_output {
          
         try {         
             // Get WSDL
-            $soapclient = new SoapClient($CFG->ombielalertsserverendpoint.'?wsdl', $soapOptions);
+            $soapclient = new SoapClient($CFG->exlibrisalertsserverendpoint.'?wsdl', $soapOptions);
 
             // Create request
             $request = array(
-                'orgCode' => $CFG->ombielalertsorgcode,
-                'password' => $CFG->ombielalertsorgpassword,
+                'orgCode' => $CFG->exlibrisalertsorgcode,
+                'password' => $CFG->exlibrisalertsorgpassword,
                 'notifications'=> array(
                     'notification'=> array(
                         'notificationTargets' => array(
@@ -142,15 +119,15 @@ class message_output_ombiel_alerts extends message_output {
         } catch(SoapFault $e) {  
             debugging($e->getMessage());
 
-             // Trigger event for failing to send email but change error to show we mean the oMbiel Alerts system.
+             // Trigger event for failing to send email but change error to show we mean the ExLibris Alerts system.
             $event = \core\event\email_failed::create(array(
                 'context' => context_system::instance(),
                 'userid' => $eventdata->userfrom->id,
                 'relateduserid' => $eventdata->userto->id,
                 'other' => array(
-                    'subject' => 'oMbiel Alerts ',
+                    'subject' => 'ExLibris Alerts ',
                     'message' => $note,
-                    'errorinfo' => 'Link to oMbiel Alerts system failed with error: '.$e->getMessage()
+                    'errorinfo' => 'Link to ExLibris Alerts system failed with error: '.$e->getMessage()
                 )
             ));
             $event->trigger();
@@ -195,11 +172,11 @@ class message_output_ombiel_alerts extends message_output {
      */
     function is_system_configured() {
         global $CFG;
-        return (!empty($CFG->ombielalertsserverendpoint) && 
-                !empty($CFG->ombielalertsserversserverusername) && 
-                !empty($CFG->ombielalertsserverpassword) && 
-                !empty($CFG->ombielalertsorgcode) && 
-                !empty($CFG->ombielalertsorgpassword)
+        return (!empty($CFG->exlibrisalertsserverendpoint) && 
+                !empty($CFG->exlibrisalertsserversserverusername) && 
+                !empty($CFG->exlibrisalertsserverpassword) && 
+                !empty($CFG->exlibrisalertsorgcode) && 
+                !empty($CFG->exlibrisalertsorgpassword)
                 );
     }
 
