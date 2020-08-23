@@ -4,7 +4,7 @@
 
 ### Moodle - [http://moodle.org](http://moodle.org)
 
-Tested with versions 2.9 through 3.2 of Moodle.
+Tested with versions 3.5 through 3.9 of Moodle.
 
 ## There are two plugins, Web Services and Alerts
 

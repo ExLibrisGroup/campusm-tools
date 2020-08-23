@@ -25,3 +25,4 @@ $string['configexlibrisalertsorgpassword'] = 'The password that goes with your o
 $string['exlibrisalertsaction'] = 'campusM action';
 $string['configexlibrisalertsaction'] = 'For messages that contain a link to Moodle, this will be the action taken on clicking the link. Usually campusm://menu?menucode=XX where XX is the menu code';
 $string['replytomessage'] = 'Reply to message';
+$string['privacy:metadata'] = 'The ombiel_webservices plugin does not store any personal data';
