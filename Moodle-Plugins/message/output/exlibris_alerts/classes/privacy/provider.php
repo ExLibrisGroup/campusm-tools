@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace obmiel_webservices\privacy;
+namespace message_exlibris_alerts\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +32,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      * Get the language string identifier with the component's language
      * file to explain why this plugin stores no data.
      *
-     * @return  string
+     * @return string - the language string identifier returned
      */
     public static function _get_reason() {
         return 'privacy:metadata';

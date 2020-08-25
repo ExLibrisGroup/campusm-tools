@@ -10,6 +10,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020082500;        // The current plugin version (Date: YYYYMMDDXX) - see https://docs.moodle.org/dev/version.php
+$plugin->version   = 2020082501;        // The current plugin version (Date: YYYYMMDDXX) - see https://docs.moodle.org/dev/version.php
 $plugin->requires  = 2018050800;        // Requires this Moodle version
 $plugin->component = 'message_exlibris_alerts';  // Full name of the plugin (used for diagnostics)
